@@ -7,7 +7,11 @@ import sys
 import serial.tools.list_ports
 
 
-class AutoDetectDerial(object):
+class AutoDetectSerialError(Exception):
+    pass
+
+
+class AutoDetectSerial(object):
 
     def __init__(self):
         pass
@@ -17,10 +21,9 @@ class AutoDetectDerial(object):
         get usb devices information with a shell script
         :return: [ "usb device information" ]
         '''
-        proc = subprocess.Popen('./get_usb_devices.sh', stdout=subprocess.PIPE)
+        proc = subprocess.Popen('./getUsbDevices.sh', stdout=subprocess.PIPE)
         usb_device_tmp = proc.stdout.read()
         usb_device = usb_device_tmp.split("\n")
-
         return usb_device
 
     def __get_arduinos_path_linux(self):
@@ -38,7 +41,7 @@ class AutoDetectDerial(object):
         arduino_devices = []
         for usb_device in usb_devices:
             usb_arduino_devices_found = re.findall(
-                '(\/dev\/.*) -(.*_arduino.*)', usb_device)
+                '(\/dev\/.*) -(.*Arduino.*)', usb_device)
             if usb_arduino_devices_found != []:
                 arduino_devices.append(usb_arduino_devices_found[0])
         return arduino_devices
@@ -54,7 +57,7 @@ class AutoDetectDerial(object):
         arduino_devices = []
 
         for device in devices:
-            if device[1].startswith("_arduino"):
+            if device[1].startswith("Arduino"):
                 arduino_devices.append((device[0], device[1]))
         return arduino_devices
 
@@ -63,19 +66,23 @@ class AutoDetectDerial(object):
         get arduinos information, description content depends on OS
         :return: [ ( "arduino path", "arduino description") ]
         '''
+        arduino_paths = []
         if sys.platform.startswith('linux'):
             print "_linux"
-            return self.__get_arduinos_path_linux()
+            arduino_paths = self.__get_arduinos_path_linux()
 
         elif sys.platform.startswith('win'):
             print "_windows"
-            return self.__get_arduino_path_windows()
+            arduino_paths = self.__get_arduino_path_windows()
+
+        if arduino_paths == []:
+            raise AutoDetectSerialError("Error: no Arduino board is connected")
+
+        return arduino_paths
 
 
 if __name__ == '__main__':
-    auto_detect_serial = AutoDetectDerial()
-    print auto_detect_serial.get_arduinos_path()
-
+    auto_detect_serial = AutoDetectSerial()
     arduino_serial = auto_detect_serial.get_arduinos_path()
     arduino_serial = arduino_serial[0]
     print arduino_serial[0], arduino_serial[1]
