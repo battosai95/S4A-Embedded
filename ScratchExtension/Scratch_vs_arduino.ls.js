@@ -14,10 +14,32 @@
     };
 
     ext.pinMode = function(pinNumber, pinValue){
+        console.log("pinMode function");
+        var data = JSON.stringify({
+            "objName": "iuletuirset"
+        });
 
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                console.log(this.responseText);
+            }
+        });
+
+        xhr.open("POST", "http://localhost:8080/arduinize", true);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.responseText)
+            }
+        };
+        xhr.send(data);
     };
 
     ext.whenGreenFlag = function () {
+        console.log("whenGreenFlag function");
         var data = JSON.stringify({
             "objName": "Stage"
         });
