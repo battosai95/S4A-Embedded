@@ -38,8 +38,20 @@
         xhr.send(data);
     };
 
-    ext.doIf = function () {
-        console.log("doIf function");
+    ext.doforever = function(){
+        console.log("doForever1 function");
+    };
+
+    ext.do_forever = function(){
+        console.log("doForever2 function");
+    };
+
+    ext.do_Forever = function () {
+        console.log("doForever3 function");
+    };
+
+    ext.doForever = function () {
+        console.log("doForever4 function");
         var data = JSON.stringify({
             "objName": "Stage"
         });
