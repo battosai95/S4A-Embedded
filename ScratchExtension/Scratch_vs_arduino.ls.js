@@ -38,8 +38,8 @@
         xhr.send(data);
     };
 
-    ext.whenGreenFlagClicked = function () {
-        console.log("whenGreenFlag function");
+    ext.doIf = function () {
+        console.log("doIf function");
         var data = JSON.stringify({
             "objName": "Stage"
         });
